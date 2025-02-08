@@ -5,8 +5,8 @@ import 'package:orders_sw/external/services/secure_storage/secure_storage.dart';
 import 'package:orders_sw/external/services/storage/storage_service.dart';
 import 'package:orders_sw/src/core/constants/storage_keys.dart';
 import 'package:orders_sw/src/core/exception/failure.dart';
-import 'package:orders_sw/src/core/injection/log.dart';
-import 'package:orders_sw/src/core/injection/log_scope.dart';
+import 'package:orders_sw/src/core/injection/log/log.dart';
+import 'package:orders_sw/src/core/injection/log/log_scope.dart';
 import 'package:orders_sw/src/features/auth/data/models/user_auth_response_model.dart';
 import 'package:orders_sw/src/features/auth/data/models/user_token_response_model.dart';
 import 'package:orders_sw/src/features/auth/domain/entities/user_auth.dart';
@@ -88,7 +88,7 @@ final class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<Either<Failure, void>> revokeToken() async {
+  Future<Either<Failure, void>> clearToken() async {
     try {
       await _secureStorage.delete(StorageKeys.token);
 

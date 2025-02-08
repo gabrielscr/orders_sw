@@ -13,5 +13,5 @@ abstract class StorageService {
   Future<Either<Failure, UserTokenEntity?>> getToken();
   Future<Either<Failure, void>> saveToken(UserTokenEntity token);
   Future<Either<Failure, void>> saveRefreshToken(UserTokenEntity token);
-  Future<Either<Failure, void>> revokeToken();
+  Future<Either<Failure, void>> clearToken();
 }
