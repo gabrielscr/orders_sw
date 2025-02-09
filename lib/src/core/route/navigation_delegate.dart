@@ -47,6 +47,7 @@ class NavigationDelegate extends RouterDelegate<Object> with ChangeNotifier, Pop
         Navigator(
           key: navigatorKey,
           pages: List.of(_state.stack.map((e) => e.navigationMaterialPage)),
+          // ignore: deprecated_member_use
           onPopPage: (route, result) => !route.didPop(result) ? false : popPage(result),
           observers: [routeObserver],
         ),

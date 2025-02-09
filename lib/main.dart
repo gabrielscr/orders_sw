@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:orders_sw/src/core/constants/constants.dart';
+import 'package:orders_sw/src/core/route/navigation_delegate.dart';
+import 'package:orders_sw/src/core/route/navigation_state.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,12 +14,12 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp.router(
+      title: Constants.appName,
+      routerDelegate: NavigationDelegate(
+        state: NavigationStateImpl(),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
