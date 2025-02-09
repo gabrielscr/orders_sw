@@ -13,16 +13,6 @@ class UserTokenRequestModel extends UserTokenRequestEntity {
     );
   }
 
-  UserTokenRequestModel copyWith({
-    String? username,
-    String? password,
-  }) {
-    return UserTokenRequestModel(
-      username: username ?? this.username,
-      password: password ?? this.password,
-    );
-  }
-
   factory UserTokenRequestModel.fromEntity(UserTokenRequestEntity entity) {
     return UserTokenRequestModel(
       username: entity.username,
@@ -43,6 +33,66 @@ class UserTokenRequestModel extends UserTokenRequestEntity {
     return UserTokenRequestEntity(
       username: username,
       password: password,
+    );
+  }
+}
+
+class UserTokenRefreshRequestModel extends UserTokenRefreshRequest {
+  const UserTokenRefreshRequestModel({required super.refreshToken});
+
+  factory UserTokenRefreshRequestModel.fromMap(Map<String, dynamic> json) {
+    return UserTokenRefreshRequestModel(
+      refreshToken: json['refreshToken'],
+    );
+  }
+
+  factory UserTokenRefreshRequestModel.fromEntity(UserTokenRefreshRequest entity) {
+    return UserTokenRefreshRequestModel(
+      refreshToken: entity.refreshToken,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'refreshToken': refreshToken,
+      'grant_type': 'refresh_token',
+      'client_id': 'user',
+    };
+  }
+
+  UserTokenRefreshRequest toEntity() {
+    return UserTokenRefreshRequest(
+      refreshToken: refreshToken,
+    );
+  }
+}
+
+class UserTokenRevokeRequestModel extends UserTokenRevokeRequest {
+  const UserTokenRevokeRequestModel({required super.token});
+
+  factory UserTokenRevokeRequestModel.fromMap(Map<String, dynamic> json) {
+    return UserTokenRevokeRequestModel(
+      token: json['token'],
+    );
+  }
+
+  factory UserTokenRevokeRequestModel.fromEntity(UserTokenRevokeRequest entity) {
+    return UserTokenRevokeRequestModel(
+      token: entity.token,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'token': token,
+      'client_id': 'user',
+      'token_type_hint': 'refresh_token',
+    };
+  }
+
+  UserTokenRevokeRequest toEntity() {
+    return UserTokenRevokeRequest(
+      token: token,
     );
   }
 }

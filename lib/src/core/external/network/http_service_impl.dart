@@ -25,27 +25,7 @@ class HttpServiceImpl implements HttpService {
     String path, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? body,
-    Map<String, dynamic>? multipartData,
   }) async {
-    if (multipartData != null) {
-      final transformedMultipartData = <String, dynamic>{};
-
-      for (final entry in multipartData.entries) {
-        transformedMultipartData[entry.key] = MultipartFile.fromBytes(
-          entry.value,
-          filename: entry.key,
-        );
-      }
-
-      return _dio
-          .post(
-            path,
-            queryParameters: queryParameters,
-            data: FormData.fromMap({...?body, ...transformedMultipartData}),
-          )
-          .handleResponse<T>();
-    }
-
     return _dio
         .post(
           path,

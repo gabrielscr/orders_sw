@@ -12,6 +12,7 @@ import 'package:orders_sw/src/core/external/network/http_service.dart';
 import 'package:orders_sw/src/core/external/network/http_service_impl.dart';
 import 'package:orders_sw/src/core/external/network/logging_interceptor.dart';
 import 'package:orders_sw/src/core/external/network/token_interceptor.dart';
+import 'package:orders_sw/src/core/injection/default/repository_injections.dart';
 import 'package:orders_sw/src/features/auth/domain/services/auth_service.dart';
 
 final getIt = GetIt.instance;
@@ -35,6 +36,8 @@ class ConfigInjection implements Injection {
     getIt.registerLazySingleton<LoggingInterceptor>(() => LoggingInterceptor());
     getIt.registerLazySingleton<TokenInterceptor>(() => TokenInterceptor(authService: getIt<AuthService>()));
     getIt.registerLazySingleton<HttpService>(() => HttpServiceImpl(_dioConfig));
+
+    await RepositoryInjections().inject(getIt);
   }
 
   static Dio get _dioConfig => Dio(

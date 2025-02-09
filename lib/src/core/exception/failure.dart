@@ -4,6 +4,8 @@ final class Failure {
   factory Failure.general() => const _GeneralFailure();
   factory Failure.storageService() => const _StorageServiceFailure();
   factory Failure.unauthorized() => const _UnauthorizedFailure();
+  factory Failure.forbidden() => const _ForbiddenFailure();
+  factory Failure.badRequest() => const _BadRequestFailure();
 }
 
 final class _GeneralFailure extends Failure {
@@ -16,4 +18,12 @@ final class _StorageServiceFailure extends Failure {
 
 final class _UnauthorizedFailure extends Failure {
   const _UnauthorizedFailure() : super._();
+}
+
+final class _ForbiddenFailure extends Failure {
+  const _ForbiddenFailure() : super._();
+}
+
+final class _BadRequestFailure extends Failure {
+  const _BadRequestFailure() : super._();
 }

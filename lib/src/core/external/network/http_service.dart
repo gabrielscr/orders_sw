@@ -8,7 +8,6 @@ abstract class HttpService {
     String path, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? body,
-    Map<String, dynamic>? multipartData,
   });
 
   Future<T> put<T>(
