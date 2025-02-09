@@ -5,8 +5,8 @@ import 'package:orders_sw/src/features/auth/domain/entities/user_token.dart';
 
 abstract class StorageService {
   //User
-  Future<Either<Failure, UserAuthEntity?>> getUser();
-  Future<Either<Failure, void>> saveUser(UserAuthEntity user);
+  Future<Either<Failure, UserEntity?>> getUser();
+  Future<Either<Failure, void>> saveUser(UserEntity user);
   Future<Either<Failure, void>> clearUser();
 
   //Token

@@ -1,9 +1,3 @@
-// {
-//     "description": "{{$randomLoremSentence}}",
-//     // "customerName": null
-//     "customerName": "{{$randomFullName}}"
-// }
-
 import 'package:orders_sw/src/features/order/domain/entities/finish_order_entity.dart';
 
 class FinishOrderModel extends FinishOrderEntity {

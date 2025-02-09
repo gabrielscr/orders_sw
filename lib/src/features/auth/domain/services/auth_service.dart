@@ -7,14 +7,14 @@ import 'package:orders_sw/src/features/auth/domain/entities/user_auth.dart';
 import 'package:orders_sw/src/features/auth/domain/entities/user_token.dart';
 
 abstract class AuthService {
-  UserAuthEntity? get user;
+  UserEntity? get user;
   UserTokenEntity? get token;
-  Stream<UserAuthEntity?> get userStream;
+  Stream<UserEntity?> get userStream;
   Stream<UserTokenEntity?> get tokenStream;
   String? get accessToken;
   bool get isAuthenticated;
 
-  Future<void> saveUser({required UserAuthEntity user});
+  Future<void> saveUser({required UserEntity user});
   Future<void> clearUser();
 
   Future<void> saveToken({required UserTokenEntity token});
@@ -30,14 +30,14 @@ class AuthServiceImpl implements AuthService {
     _init();
   }
 
-  final _userStreamController = StreamController<UserAuthEntity?>();
+  final _userStreamController = StreamController<UserEntity?>();
   final _tokenStreamController = StreamController<UserTokenEntity?>();
 
-  UserAuthEntity? _currentUser;
+  UserEntity? _currentUser;
   UserTokenEntity? _currentToken;
 
   @override
-  Stream<UserAuthEntity?> get userStream => _userStreamController.stream;
+  Stream<UserEntity?> get userStream => _userStreamController.stream;
 
   @override
   Stream<UserTokenEntity?> get tokenStream => _tokenStreamController.stream;
@@ -49,7 +49,7 @@ class AuthServiceImpl implements AuthService {
   bool get isAuthenticated => _currentUser != null && _currentToken != null;
 
   @override
-  Future<void> saveUser({required UserAuthEntity user}) async {
+  Future<void> saveUser({required UserEntity user}) async {
     _updateUserStream(user);
     await _storageService.saveUser(user);
   }
@@ -61,7 +61,7 @@ class AuthServiceImpl implements AuthService {
   }
 
   @override
-  UserAuthEntity? get user => _currentUser;
+  UserEntity? get user => _currentUser;
 
   Future<void> _init() async {
     final userResult = await _storageService.getUser();
@@ -76,7 +76,7 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
-  void _updateUserStream(UserAuthEntity user) {
+  void _updateUserStream(UserEntity user) {
     try {
       _currentUser = user;
       _userStreamController.add(user);

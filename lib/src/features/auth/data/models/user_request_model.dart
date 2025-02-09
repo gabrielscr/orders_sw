@@ -1,30 +1,30 @@
-import 'package:orders_sw/src/features/auth/domain/entities/user_auth_request.dart';
+import 'package:orders_sw/src/features/auth/domain/entities/user_request.dart';
 
-class UserAuthRequestModel extends UserAuthRequestEntity {
-  const UserAuthRequestModel({
+class UserRequestModel extends UserRequestEntity {
+  const UserRequestModel({
     required super.email,
     required super.password,
   });
 
-  factory UserAuthRequestModel.fromMap(Map<String, dynamic> json) {
-    return UserAuthRequestModel(
+  factory UserRequestModel.fromMap(Map<String, dynamic> json) {
+    return UserRequestModel(
       email: json['email'],
       password: json['password'],
     );
   }
 
-  UserAuthRequestModel copyWith({
+  UserRequestModel copyWith({
     String? email,
     String? password,
   }) {
-    return UserAuthRequestModel(
+    return UserRequestModel(
       email: email ?? this.email,
       password: password ?? this.password,
     );
   }
 
-  factory UserAuthRequestModel.fromEntity(UserAuthRequestEntity entity) {
-    return UserAuthRequestModel(
+  factory UserRequestModel.fromEntity(UserRequestEntity entity) {
+    return UserRequestModel(
       email: entity.email,
       password: entity.password,
     );

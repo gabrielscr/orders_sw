@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:orders_sw/external/services/secure_storage/secure_storage.dart';
+import 'package:orders_sw/external/services/storage/storage_exception_handler.dart';
 import 'package:orders_sw/external/services/storage/storage_service.dart';
 import 'package:orders_sw/src/core/constants/storage_keys.dart';
 import 'package:orders_sw/src/core/exception/failure.dart';
-import 'package:orders_sw/src/core/injection/log/log.dart';
-import 'package:orders_sw/src/core/injection/log/log_scope.dart';
-import 'package:orders_sw/src/features/auth/data/models/user_auth_response_model.dart';
+import 'package:orders_sw/src/features/auth/data/models/user_model.dart';
 import 'package:orders_sw/src/features/auth/data/models/user_token_response_model.dart';
 import 'package:orders_sw/src/features/auth/domain/entities/user_auth.dart';
 import 'package:orders_sw/src/features/auth/domain/entities/user_token.dart';
@@ -24,31 +23,27 @@ final class StorageServiceImpl implements StorageService {
 
       return right(null);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
   }
 
   @override
-  Future<Either<Failure, UserAuthEntity?>> getUser() async {
+  Future<Either<Failure, UserEntity?>> getUser() async {
     try {
       final userFromStorage = await _secureStorage.read('user');
 
-      final user = userFromStorage != null ? UserAuthResponseModel.fromMap(jsonDecode(userFromStorage)).toEntity() : null;
+      final user = userFromStorage != null ? UserModel.fromMap(jsonDecode(userFromStorage)).toEntity() : null;
 
       return right(user);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
   }
 
   @override
-  Future<Either<Failure, void>> saveUser(UserAuthEntity user) async {
+  Future<Either<Failure, void>> saveUser(UserEntity user) async {
     try {
-      final map = UserAuthResponseModel.fromEntity(user).toMap();
+      final map = UserModel.fromEntity(user).toMap();
 
       final userJson = jsonEncode(map);
 
@@ -56,20 +51,8 @@ final class StorageServiceImpl implements StorageService {
 
       return right(null);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
-  }
-
-  Left<Failure, T?> _logError<T>(Exception e) {
-    Log().error(
-      'Error in StorageService',
-      name: LogScope.storage,
-      exception: e,
-    );
-
-    return Left(Failure.storageService());
   }
 
   @override
@@ -81,9 +64,7 @@ final class StorageServiceImpl implements StorageService {
 
       return right(token);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
   }
 
@@ -94,9 +75,7 @@ final class StorageServiceImpl implements StorageService {
 
       return right(null);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
   }
 
@@ -111,9 +90,7 @@ final class StorageServiceImpl implements StorageService {
 
       return right(null);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
   }
 
@@ -126,9 +103,7 @@ final class StorageServiceImpl implements StorageService {
 
       return right(null);
     } on Exception catch (e) {
-      _logError(e);
-
-      return left(Failure.storageService());
+      return e.handleStorageFailure();
     }
   }
 }
