@@ -77,7 +77,7 @@ class TokenServiceImpl implements TokenService {
 
     return repoResponse.fold(
       (failure) {
-        Log().error('Error refreshing token: $failure', name: LogScope.auth);
+        Log().error('Error refreshing token', name: LogScope.auth);
         return left(failure);
       },
       (token) {

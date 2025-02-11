@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:orders_sw/src/core/constants/app_constants.dart';
 import 'package:orders_sw/src/core/design_system/loading_overlay.dart';
 import 'package:orders_sw/src/core/injection/injections.dart';
+import 'package:orders_sw/src/core/route/route_path.dart';
 import 'package:orders_sw/src/core/utils/utils.dart';
 import 'package:orders_sw/src/features/order/presentation/viewmodels/order_provider.dart';
 import 'package:orders_sw/src/features/order/presentation/viewmodels/order_state.dart';
+import 'package:orders_sw/src/features/order/presentation/widgets/empty_orders.dart';
+import 'package:orders_sw/src/features/order/presentation/widgets/order_error.dart';
+import 'package:orders_sw/src/features/order/presentation/widgets/order_list_item.dart';
 import 'package:provider/provider.dart';
 
 class OrdersView extends StatelessWidget {
@@ -31,7 +36,7 @@ class _OrdersViewContentState extends State<OrdersViewContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Orders'),
+        title: const Text(AppConstants.orders),
       ),
       body: Selector<OrderProvider, OrderState>(
         selector: (context, provider) {
@@ -40,6 +45,7 @@ class _OrdersViewContentState extends State<OrdersViewContent> {
               SWLoading().show(context);
             } else if (provider.state.status == OrderStatus.error) {
               showSnackBarError(context, AppConstants.generalError);
+              SWLoading().hide();
             } else {
               SWLoading().hide();
             }
@@ -53,40 +59,25 @@ class _OrdersViewContentState extends State<OrdersViewContent> {
               onRefresh: () async {
                 context.read<OrderProvider>().init();
               },
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error, size: 100, color: Colors.red),
-                      const SizedBox(height: 30),
-                      const Text(AppConstants.errorWhenLoadingOrders),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.read<OrderProvider>().init();
-                          },
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(1),
-                              ),
-                              backgroundColor: Colors.black),
-                          child: const Text(AppConstants.tryAgain, style: TextStyle(color: Colors.white, letterSpacing: 2)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              child: OrderError(
+                onPressed: () => context.read<OrderProvider>().init(),
               ),
+            );
+          } else if (state.status == OrderStatus.empty) {
+            return EmptyOrders(
+              onPressed: () => context.go(RoutePath.orderCreate),
             );
           }
 
-          return const Center(
-            child: Text('orders'),
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<OrderProvider>().init();
+            },
+            child: ListView.builder(
+                itemCount: state.orders.length,
+                itemBuilder: (context, index) {
+                  return OrderListItem(order: state.orders[index]);
+                }),
           );
         },
       ),

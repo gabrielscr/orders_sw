@@ -14,5 +14,6 @@ class ApiException implements Exception {
   final int statusCode;
 
   bool get isServerError => statusCode == StatusCode.e500;
+  bool get isBadRequest => statusCode == StatusCode.e400;
   bool get isUnauthorized => statusCode == StatusCode.e401;
 }

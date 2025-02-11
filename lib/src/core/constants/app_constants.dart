@@ -20,4 +20,6 @@ class AppConstants {
   static const String errorWhenFinishingOrder = 'Erro ao finalizar pedido';
   static const String orderCreated = 'Pedido criado com sucesso';
   static const String orderFinished = 'Pedido finalizado com sucesso';
+  static const String emptyOrders = 'Nenhum pedido encontrado';
+  
 }

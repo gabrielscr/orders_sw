@@ -10,8 +10,6 @@ void main() async {
 
   await ConfigInjection().inject();
 
-  
-
   runApp(const App());
 }
 

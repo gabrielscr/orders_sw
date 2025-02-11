@@ -39,10 +39,7 @@ class TokenInterceptor extends InterceptorsWrapper {
   }
 
   @override
-  Future<void> onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == StatusCode.e401) {
       final oldToken = await _tokenService.getToken();
 
@@ -55,37 +52,32 @@ class TokenInterceptor extends InterceptorsWrapper {
         return handler.next(err);
       }
 
-      UserTokenEntity? refreshToken;
-
       final response = await _tokenService.getRefreshToken(oldToken.accessToken);
+
+      UserTokenEntity? refreshToken;
+      bool refreshFailed = false;
 
       response.fold(
         (failure) {
-          Log().warning(
-            'Error refreshing token',
-            name: LogScope.api,
-          );
-
-          return handler.next(err);
+          refreshFailed = true;
         },
         (token) {
           refreshToken = token;
+          Log().info(
+            'Token refreshed successfully',
+            name: LogScope.api,
+          );
         },
       );
 
-      if (refreshToken == null) {
-        Log().warning(
-          'Error refreshing token: ${err.response?.statusCode}',
+      if (refreshFailed || refreshToken == null) {
+        Log().error(
+          'Token refresh failed',
           name: LogScope.api,
         );
-
+        await _tokenService.clearToken();
         return handler.next(err);
       }
-
-      Log().info(
-        'Token refreshed successfully',
-        name: LogScope.api,
-      );
 
       await _tokenService.saveToken(token: refreshToken!);
 
@@ -100,6 +92,6 @@ class TokenInterceptor extends InterceptorsWrapper {
       }
     }
 
-    handler.next(err);
+    return handler.next(err);
   }
 }
