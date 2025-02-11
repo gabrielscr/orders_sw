@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orders_sw/src/features/order/domain/entities/create_order_entity.dart';
 import 'package:orders_sw/src/features/order/domain/entities/finish_order_entity.dart';
+import 'package:orders_sw/src/features/order/domain/entities/order_entity.dart';
 import 'package:orders_sw/src/features/order/domain/usecases/create_order_usecase.dart';
 import 'package:orders_sw/src/features/order/domain/usecases/finish_order_usecase.dart';
 import 'package:orders_sw/src/features/order/domain/usecases/get_orders_usecase.dart';
@@ -38,7 +39,7 @@ class OrderProvider extends ChangeNotifier {
     result.fold(
       (failure) {
         _updateState(
-          OrderState.error(),
+          OrderState.error(failure: failure),
         );
       },
       (orders) => _updateState(
@@ -47,21 +48,17 @@ class OrderProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> finishOrder() async {
-    if (state.order == null) {
-      _updateState(
-        OrderState.error(),
-      );
+  Future<void> finishOrder({required OrderEntity order}) async {
+    _updateState(
+      OrderState.loading(),
+    );
 
-      return;
-    }
-
-    final result = await _finishOrderUsecase(FinishOrderEntity(id: state.order!.id, description: state.order!.description, customerName: state.order!.customerName));
+    final result = await _finishOrderUsecase(FinishOrderEntity(id: order.id, description: order.description, customerName: order.customerName));
 
     result.fold(
       (failure) {
         _updateState(
-          OrderState.error(),
+          OrderState.finishError(),
         );
       },
       (order) => _updateState(
@@ -71,17 +68,27 @@ class OrderProvider extends ChangeNotifier {
   }
 
   Future<void> createOrder({required String description, required String customerName}) async {
+    _updateState(
+      OrderState.loading(),
+    );
+
     final result = await _createOrderUsecase(CreateOrderEntity(description: description, customerName: customerName));
 
     result.fold(
       (failure) {
         _updateState(
-          OrderState.error(),
+          OrderState.createError(),
         );
       },
       (order) => _updateState(
         OrderState.created(order),
       ),
+    );
+  }
+
+  void resetState() {
+    _updateState(
+      OrderState.initial(),
     );
   }
 }

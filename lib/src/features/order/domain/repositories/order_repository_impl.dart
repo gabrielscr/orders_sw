@@ -33,7 +33,7 @@ class OrderRepositoryImpl implements OrderRepository {
   @override
   Future<Either<Failure, OrderEntity>> finish(FinishOrderEntity order) async {
     try {
-      final response = await _httpService.post(
+      final response = await _httpService.put(
         Endpoints.finishOrder(order.id),
         body: FinishOrderModel.fromEntity(order).toMap(),
       );
@@ -47,7 +47,10 @@ class OrderRepositoryImpl implements OrderRepository {
   @override
   Future<Either<Failure, List<OrderEntity>>> get() async {
     try {
-      final response = await _httpService.get(Endpoints.orders);
+      final response = await _httpService.get(
+        Endpoints.orders,
+        queryParameters: {'includeFinished': true},
+      );
 
       if (response.isEmpty) {
         return const Right([]);

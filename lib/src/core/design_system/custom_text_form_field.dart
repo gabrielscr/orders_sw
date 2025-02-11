@@ -8,21 +8,24 @@ class SWTextFormField extends StatelessWidget {
   final FocusNode? focusNode;
   final String? Function(String?)? onChanged;
   final TextEditingController? controller;
+  final int? maxLines;
 
   const SWTextFormField({
     super.key,
     required this.label,
-    required this.obscureText,
-    required this.keyboardType,
+    this.keyboardType = TextInputType.text,
+    this.obscureText = false,
     this.validator,
     this.focusNode,
     this.onChanged,
     this.controller,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines,
       controller: controller,
       onChanged: onChanged,
       focusNode: focusNode,

@@ -14,3 +14,14 @@ void showSnackBarError(BuildContext context, String message) {
     ),
   );
 }
+
+void showSnackBarSuccess(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      showCloseIcon: true,
+      content: Text(message),
+      backgroundColor: Colors.green,
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+}

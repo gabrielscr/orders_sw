@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orders_sw/src/core/constants/app_constants.dart';
@@ -60,156 +62,178 @@ class _AuthViewState extends State<AuthView> {
 
     return Selector<AuthProvider, AuthState>(
       selector: (context, provider) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (provider.state == AuthState.loading()) {
-            SWLoading().show(context);
-          } else if (provider.state == AuthState.authenticated()) {
-            context.pushReplacement(RoutePath.orders);
-          } else if (provider.state == AuthState.userError()) {
-            showSnackBarError(context, AppConstants.userInvalid);
-          } else if (provider.state == AuthState.generalError()) {
-            showSnackBarError(context, AppConstants.generalError);
-          }
-        });
+        Future.delayed(
+          Duration.zero,
+          () {
+            final status = provider.state.status;
 
-        SWLoading().hide();
+            if (status == AuthStatus.loading) {
+              SWLoading().show(context);
+            }
+
+            if (status == AuthStatus.userError) {
+              showSnackBarError(context, AppConstants.userInvalid);
+
+              SWLoading().hide();
+            }
+            if (status == AuthStatus.generalError) {
+              showSnackBarError(context, AppConstants.generalError);
+
+              SWLoading().hide();
+            }
+          },
+        );
 
         return provider.state;
       },
-      builder: (context, state, child) => Scaffold(
-        backgroundColor: const Color(0xFF46068E),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).padding.top,
-                  ),
-                  Image.asset(
-                    Constants.logo,
-                    width: 200,
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Text(
-                    AppConstants.welcome,
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    AppConstants.loginToContinue,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                        ),
-                  ),
-                  const SizedBox(height: 20),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(5),
+      builder: (context, state, child) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!context.mounted) return;
+
+          if (state.status == AuthStatus.authenticated) {
+            Future.delayed(const Duration(milliseconds: 300));
+
+            if (authProvider.isAuthenticated) {
+              context.pushReplacement(RoutePath.orders);
+            }
+          }
+        });
+
+        return Scaffold(
+          backgroundColor: const Color(0xFF46068E),
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).padding.top,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            SWTextFormField(
-                              controller: _userNameController,
-                              focusNode: _userNameFocus,
-                              label: AppConstants.user,
-                              obscureText: false,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return AppConstants.requiredField;
-                                }
-                                return null;
-                              },
-                              onChanged: (_) {
-                                authProvider.resetState();
+                    Image.asset(
+                      Constants.logo,
+                      width: 200,
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      AppConstants.welcome,
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      AppConstants.loginToContinue,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                    const SizedBox(height: 20),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              SWTextFormField(
+                                controller: _userNameController,
+                                focusNode: _userNameFocus,
+                                label: AppConstants.user,
+                                obscureText: false,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return AppConstants.requiredField;
+                                  }
+                                  return null;
+                                },
+                                onChanged: (_) {
+                                  authProvider.resetState();
 
-                                setState(() {
-                                  _isValidForm = _formKey.currentState!.validate();
-                                });
+                                  setState(() {
+                                    _isValidForm = _formKey.currentState!.validate();
+                                  });
 
-                                return;
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            SWTextFormField(
-                              controller: _passwordController,
-                              focusNode: _passwordFocus,
-                              label: AppConstants.password,
-                              obscureText: true,
-                              keyboardType: TextInputType.text,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return AppConstants.requiredField;
-                                }
-                                return null;
-                              },
-                              onChanged: (_) {
-                                authProvider.resetState();
-
-                                setState(() {
-                                  _isValidForm = _formKey.currentState!.validate();
-                                });
-
-                                return;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Consumer(
-                                builder: (context, watch, child) {
-                                  return ElevatedButton(
-                                    onPressed: _isValidForm
-                                        ? () {
-                                            if (_formKey.currentState!.validate()) {
-                                              authProvider.generateToken(username: _userNameController.text, password: _passwordController.text);
-                                            }
-                                          }
-                                        : null,
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(1),
-                                        ),
-                                        backgroundColor: Colors.black),
-                                    child: Text(
-                                      AppConstants.enter,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            letterSpacing: 3,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                    ),
-                                  );
+                                  return;
                                 },
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 10),
+                              SWTextFormField(
+                                controller: _passwordController,
+                                focusNode: _passwordFocus,
+                                label: AppConstants.password,
+                                obscureText: true,
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return AppConstants.requiredField;
+                                  }
+                                  return null;
+                                },
+                                onChanged: (_) {
+                                  authProvider.resetState();
+
+                                  setState(() {
+                                    _isValidForm = _formKey.currentState!.validate();
+                                  });
+
+                                  return;
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Consumer(
+                                  builder: (context, watch, child) {
+                                    return ElevatedButton(
+                                      onPressed: _isValidForm
+                                          ? () {
+                                              if (_formKey.currentState!.validate()) {
+                                                authProvider.generateToken(username: _userNameController.text, password: _passwordController.text);
+                                              }
+                                            }
+                                          : null,
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(1),
+                                          ),
+                                          backgroundColor: Colors.black),
+                                      child: Text(
+                                        AppConstants.enter,
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              letterSpacing: 3,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox.shrink(),
-            ],
+                  ],
+                ),
+                const SizedBox.shrink(),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -4,10 +4,11 @@ class RoutePath {
   static final String splash = '/$_splash';
   static final String login = '/$_login';
   static final String orders = '/$_orders';
-  static final String orderDetail = '/$_orderDetail/:id';
-  static final String orderFinish = '/$_orderFinish/:id';
+  static final String orderDetail = '/$_orderDetail';
+  static final String orderFinish = '/$_orderFinish';
   static final String orderCreate = '/$_orderCreate';
   static final String notFound = '/$_notFound';
+  static final String user = '/$_user';
 
   static String get _splash => Routes.splash;
   static String get _login => Routes.login;
@@ -16,4 +17,5 @@ class RoutePath {
   static String get _orderFinish => Routes.orderFinish;
   static String get _orderCreate => Routes.orderCreate;
   static String get _notFound => Routes.notFound;
+  static String get _user => Routes.user;
 }

@@ -36,15 +36,34 @@ class _OrdersViewContentState extends State<OrdersViewContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.account_circle, color: Color(0xFF46068E)),
+          onPressed: () => context.go(RoutePath.user),
+        ),
         title: const Text(AppConstants.orders),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info, color: Color(0xFF46068E)),
+            onPressed: showInfoDialog,
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.go(RoutePath.orderCreate),
+        backgroundColor: const Color(0xFF46068E),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Selector<OrderProvider, OrderState>(
         selector: (context, provider) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (provider.state.status == OrderStatus.loading) {
               SWLoading().show(context);
-            } else if (provider.state.status == OrderStatus.error) {
+            } else if (provider.state.status == OrderStatus.error && provider.state.failure!.isBadRequest) {
               showSnackBarError(context, AppConstants.generalError);
+              SWLoading().hide();
+            } else if (provider.state.status == OrderStatus.error && provider.state.failure!.isUnauthorized) {
+              showSnackBarError(context, AppConstants.expiredSession);
               SWLoading().hide();
             } else {
               SWLoading().hide();
@@ -74,13 +93,73 @@ class _OrdersViewContentState extends State<OrdersViewContent> {
               context.read<OrderProvider>().init();
             },
             child: ListView.builder(
-                itemCount: state.orders.length,
-                itemBuilder: (context, index) {
-                  return OrderListItem(order: state.orders[index]);
-                }),
+              itemCount: state.orders.length,
+              itemBuilder: (context, index) {
+                return OrderListItem(
+                  order: state.orders[index],
+                );
+              },
+            ),
           );
         },
       ),
+    );
+  }
+
+  Future<T?> showInfoDialog<T>() {
+    return showDialog<T>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: const Text(
+            AppConstants.info,
+            style: TextStyle(color: Color(0xFF46068E)),
+            textAlign: TextAlign.center,
+          ),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppConstants.infoMessage),
+              SizedBox(height: 20),
+              Text(AppConstants.status, style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 5),
+                  Text(AppConstants.finishedOrder),
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  Icon(Icons.pending, color: Colors.orange),
+                  SizedBox(width: 5),
+                  Text(AppConstants.pendingOrder),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Icon(Icons.add_box_rounded, color: Color(0xFF46068E)),
+                  SizedBox(width: 5),
+                  Expanded(child: Text(AppConstants.infoCreateOrder)),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text(AppConstants.close),
+            ),
+          ],
+        );
+      },
     );
   }
 }

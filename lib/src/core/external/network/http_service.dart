@@ -10,6 +10,12 @@ abstract class HttpService {
     Map<String, dynamic>? body,
   });
 
+  Future<T> postForTokenOnly<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? body,
+  });
+
   Future<T> put<T>(
     String path, {
     Map<String, dynamic>? body,

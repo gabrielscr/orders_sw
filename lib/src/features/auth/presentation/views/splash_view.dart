@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:orders_sw/src/core/constants/constants.dart';
 import 'package:orders_sw/src/core/route/route_path.dart';
 import 'package:orders_sw/src/features/auth/presentation/provider/auth_provider.dart';
-import 'package:orders_sw/src/features/auth/presentation/provider/auth_state.dart';
 import 'package:provider/provider.dart';
 
 class SplashView extends StatefulWidget {
@@ -20,15 +19,17 @@ class _SplashViewState extends State<SplashView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF46068E),
-      body: Selector<AuthProvider, AuthState>(
-        selector: (context, provider) => provider.state,
-        builder: (context, state, child) {
+      body: Builder(
+        builder: (context) {
+          final authProvider = context.read<AuthProvider>();
+
           Future.delayed(const Duration(seconds: 2), () {
-            if (state.status == AuthStatus.authenticated) {
+            if (authProvider.isAuthenticated) {
               context.pushReplacement(RoutePath.orders);
-            } else {
-              context.go(RoutePath.login);
+              return;
             }
+
+            context.pushReplacement(RoutePath.login);
           });
 
           return Center(

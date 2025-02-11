@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:orders_sw/src/core/exception/failure.dart';
 import 'package:orders_sw/src/features/order/domain/entities/order_entity.dart';
 
 enum OrderStatus {
@@ -8,18 +9,22 @@ enum OrderStatus {
   empty,
   error,
   created,
+  createError,
   finish,
+  finishError,
 }
 
 class OrderState extends Equatable {
   final OrderStatus status;
   final List<OrderEntity> orders;
   final OrderEntity? order;
+  final Failure? failure;
 
   const OrderState({
     this.status = OrderStatus.initial,
     this.orders = const [],
     this.order,
+    this.failure,
   });
 
   factory OrderState.initial() => const OrderState(
@@ -45,9 +50,10 @@ class OrderState extends Equatable {
     );
   }
 
-  factory OrderState.error() {
-    return const OrderState(
+  factory OrderState.error({required Failure failure}) {
+    return  OrderState(
       status: OrderStatus.error,
+      failure: failure,
     );
   }
 
@@ -58,10 +64,22 @@ class OrderState extends Equatable {
     );
   }
 
+  factory OrderState.finishError() {
+    return const OrderState(
+      status: OrderStatus.finishError,
+    );
+  }
+
   factory OrderState.created(OrderEntity order) {
     return OrderState(
       status: OrderStatus.created,
       order: order,
+    );
+  }
+
+  factory OrderState.createError() {
+    return const OrderState(
+      status: OrderStatus.createError,
     );
   }
 

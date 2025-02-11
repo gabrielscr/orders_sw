@@ -17,7 +17,6 @@ class FinishOrderModel extends FinishOrderEntity {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'description': description,
       'customerName': customerName,
     };

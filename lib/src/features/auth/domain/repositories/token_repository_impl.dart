@@ -17,7 +17,7 @@ class TokenRepositoryImpl implements TokenRepository {
   @override
   Future<Either<Failure, UserTokenEntity>> generate(UserTokenRequestEntity entity) async {
     try {
-      final response = await _httpService.post(
+      final response = await _httpService.postForTokenOnly(
         Endpoints.emitToken,
         body: UserTokenRequestModel.fromEntity(entity).toMap(),
       );
@@ -33,7 +33,7 @@ class TokenRepositoryImpl implements TokenRepository {
   @override
   Future<Either<Failure, UserTokenEntity>> refresh(String token) async {
     try {
-      final response = await _httpService.post(
+      final response = await _httpService.postForTokenOnly(
         Endpoints.refreshToken,
         body: UserTokenRefreshRequestModel(refreshToken: token).toMap(),
       );
@@ -49,7 +49,7 @@ class TokenRepositoryImpl implements TokenRepository {
   @override
   Future<Either<Failure, Unit>> revoke(String token) async {
     try {
-      await _httpService.post(
+      await _httpService.postForTokenOnly(
         Endpoints.revokeToken,
         body: UserTokenRevokeRequestModel(token: token).toMap(),
       );

@@ -12,6 +12,7 @@ class ProviderInjections implements Injection {
         revokeTokenUsecase: getIt(),
         getUserUsecase: getIt(),
         restoreSessionUsecase: getIt(),
+        tokenService: getIt(),
       ),
     );
 

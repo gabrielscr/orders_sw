@@ -22,9 +22,11 @@ class AuthState extends Equatable {
         status: AuthStatus.unauthenticated,
       );
 
-  factory AuthState.authenticated() {
-    return const AuthState(
+  factory AuthState.authenticated({UserEntity? user, UserTokenEntity? token}) {
+    return AuthState(
       status: AuthStatus.authenticated,
+      user: user,
+      token: token,
     );
   }
 

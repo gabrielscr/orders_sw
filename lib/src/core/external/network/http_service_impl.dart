@@ -36,6 +36,24 @@ class HttpServiceImpl implements HttpService {
   }
 
   @override
+  Future<T> postForTokenOnly<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? body,
+  }) async {
+    return _dio
+        .post(
+          path,
+          queryParameters: queryParameters,
+          data: body,
+          options: Options(
+            contentType: Headers.formUrlEncodedContentType,
+          ),
+        )
+        .handleResponse<T>();
+  }
+
+  @override
   Future<T> put<T>(
     String path, {
     Map<String, dynamic>? body,

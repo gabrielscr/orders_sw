@@ -55,7 +55,6 @@ class ConfigInjection {
           baseUrl: Constants.baseUrl,
           headers: {
             'Accept': '*/*',
-            'Content-Type': 'application/x-www-form-urlencoded',
             'Transfer-Encoding': 'chunked',
             'Connection': 'keep-alive',
             'Server': 'kestrel',

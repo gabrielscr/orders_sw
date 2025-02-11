@@ -14,7 +14,7 @@ class UsecasesInjections implements Injection {
   Future<void> inject(GetIt getIt) async {
     getIt.registerFactory<GenerateTokenUsecase>(() => GenerateTokenUsecase(tokenRepository: getIt(), tokenService: getIt()));
     getIt.registerFactory<GenerateRefreshTokenUsecase>(() => GenerateRefreshTokenUsecase(tokenRepository: getIt()));
-    getIt.registerFactory<RevokeTokenUsecase>(() => RevokeTokenUsecase(tokenRepository: getIt()));
+    getIt.registerFactory<RevokeTokenUsecase>(() => RevokeTokenUsecase(tokenRepository: getIt(), tokenService: getIt()));
     getIt.registerFactory<GetUserUsecase>(() => GetUserUsecase(authRepository: getIt()));
     getIt.registerFactory<RestoreSessionUsecase>(() => RestoreSessionUsecase(tokenService: getIt()));
 
