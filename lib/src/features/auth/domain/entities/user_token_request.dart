@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:orders_sw/src/core/utils/utils.dart';
 
 class UserTokenRequestEntity extends Equatable {
   final String username;
@@ -8,6 +9,20 @@ class UserTokenRequestEntity extends Equatable {
     required this.username,
     required this.password,
   });
+
+  bool get isValidUsername => isValidEmail(username);
+
+  bool get isValid => username.isNotEmpty && password.isNotEmpty && isValidEmail(username);
+
+  UserTokenRequestEntity copyWith({
+    String? username,
+    String? password,
+  }) {
+    return UserTokenRequestEntity(
+      username: username ?? this.username,
+      password: password ?? this.password,
+    );
+  }
 
   @override
   List<Object?> get props => [username, password];

@@ -17,7 +17,7 @@ class TokenInterceptor extends InterceptorsWrapper {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final userToken = getIt<AuthService>().token;
+    final userToken = await getIt<AuthService>().getToken();
 
     if (userToken == null) {
       Log().warning(
@@ -49,6 +49,7 @@ class TokenInterceptor extends InterceptorsWrapper {
         name: LogScope.api,
       );
       await _authService.clearUser();
+      await _authService.clearToken();
     }
     handler.next(err);
   }

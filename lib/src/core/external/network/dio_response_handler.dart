@@ -19,7 +19,7 @@ extension DioResponseHandler on Future<Response<Object?>> {
 
       late final Object data;
 
-      data = responseData['data'];
+      data = responseData;
 
       Log().verbose(
         '$data',

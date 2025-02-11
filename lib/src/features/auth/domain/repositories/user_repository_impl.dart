@@ -17,7 +17,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final response = await _httpService.get(Endpoints.user);
 
-      final user = UserModel.fromMap(response.data).toEntity();
+      final user = UserModel.fromMap(response).toEntity();
 
       return Right(user);
     } on Exception catch (e) {

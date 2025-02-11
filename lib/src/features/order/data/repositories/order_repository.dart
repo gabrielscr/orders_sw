@@ -6,6 +6,6 @@ import 'package:orders_sw/src/features/order/domain/entities/order_entity.dart';
 
 abstract class OrderRepository {
   Future<Either<Failure, List<OrderEntity>>> get();
-  Future<Either<Failure, Unit>> create(CreateOrderEntity order);
-  Future<Either<Failure, Unit>> finish(FinishOrderEntity order);
+  Future<Either<Failure, OrderEntity>> create(CreateOrderEntity order);
+  Future<Either<Failure, OrderEntity>> finish(FinishOrderEntity order);
 }

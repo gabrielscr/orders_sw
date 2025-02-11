@@ -17,28 +17,28 @@ class OrderRepositoryImpl implements OrderRepository {
   const OrderRepositoryImpl({required HttpService httpService}) : _httpService = httpService;
 
   @override
-  Future<Either<Failure, Unit>> create(CreateOrderEntity order) async {
+  Future<Either<Failure, OrderEntity>> create(CreateOrderEntity order) async {
     try {
-      await _httpService.post(
+      final response = await _httpService.post(
         Endpoints.createOrder,
         body: CreateOrderModel.fromEntity(order).toMap(),
       );
 
-      return const Right(unit);
+      return Right(OrderModel.fromMap(response).toEntity());
     } on Exception catch (e) {
       return e.handleFailure();
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> finish(FinishOrderEntity order) async {
+  Future<Either<Failure, OrderEntity>> finish(FinishOrderEntity order) async {
     try {
-      await _httpService.post(
+      final response = await _httpService.post(
         Endpoints.finishOrder(order.id),
         body: FinishOrderModel.fromEntity(order).toMap(),
       );
 
-      return const Right(unit);
+      return Right(OrderModel.fromMap(response).toEntity());
     } on Exception catch (e) {
       return e.handleFailure();
     }

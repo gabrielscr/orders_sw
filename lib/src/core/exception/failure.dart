@@ -6,6 +6,12 @@ final class Failure {
   factory Failure.unauthorized() => const _UnauthorizedFailure();
   factory Failure.forbidden() => const _ForbiddenFailure();
   factory Failure.badRequest() => const _BadRequestFailure();
+
+  bool get isGeneral => this is _GeneralFailure;
+  bool get isStorageService => this is _StorageServiceFailure;
+  bool get isUnauthorized => this is _UnauthorizedFailure;
+  bool get isForbidden => this is _ForbiddenFailure;
+  bool get isBadRequest => this is _BadRequestFailure;
 }
 
 final class _GeneralFailure extends Failure {

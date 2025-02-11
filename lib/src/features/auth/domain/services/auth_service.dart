@@ -9,162 +9,95 @@ import 'package:orders_sw/src/features/auth/domain/entities/user_token.dart';
 abstract class AuthService {
   UserEntity? get user;
   UserTokenEntity? get token;
-  Stream<UserEntity?> get userStream;
-  Stream<UserTokenEntity?> get tokenStream;
   String? get accessToken;
-  bool get isAuthenticated;
+  Future<bool> isAuthenticated();
 
   Future<void> saveUser({required UserEntity user});
   Future<void> clearUser();
+  Future<UserEntity?> getUser();
 
   Future<void> saveToken({required UserTokenEntity token});
   Future<void> clearToken();
-
-  void dispose();
+  Future<UserTokenEntity?> getToken();
 }
 
 class AuthServiceImpl implements AuthService {
   final StorageService _storageService;
 
   AuthServiceImpl({required StorageService storageService}) : _storageService = storageService {
-    _init();
+    getToken();
+    getUser();
   }
-
-  final _userStreamController = StreamController<UserEntity?>();
-  final _tokenStreamController = StreamController<UserTokenEntity?>();
 
   UserEntity? _currentUser;
   UserTokenEntity? _currentToken;
 
   @override
-  Stream<UserEntity?> get userStream => _userStreamController.stream;
-
-  @override
-  Stream<UserTokenEntity?> get tokenStream => _tokenStreamController.stream;
-
-  @override
   String? get accessToken => token?.accessToken;
 
   @override
-  bool get isAuthenticated => _currentUser != null && _currentToken != null;
+  Future<bool> isAuthenticated() async {
+    final token = await getToken();
+
+    return token != null;
+  }
 
   @override
   Future<void> saveUser({required UserEntity user}) async {
-    _updateUserStream(user);
     await _storageService.saveUser(user);
   }
 
   @override
   Future<void> clearUser() async {
-    _clearUserStream();
     await _storageService.clearUser();
   }
 
   @override
   UserEntity? get user => _currentUser;
 
-  Future<void> _init() async {
-    final userResult = await _storageService.getUser();
-
-    final newUser = userResult.fold(
-      (l) => null,
-      (user) => user,
-    );
-
-    if (newUser != null) {
-      _updateUserStream(newUser);
-    }
-  }
-
-  void _updateUserStream(UserEntity user) {
-    try {
-      _currentUser = user;
-      _userStreamController.add(user);
-    } on Exception catch (e) {
-      Log().error(
-        'Error updating user stream: $e',
-        name: LogScope.auth,
-      );
-    }
-
-    Log().info(
-      'User updated: $user',
-      name: LogScope.auth,
-    );
-  }
-
-  void _clearUserStream() {
-    Log().warning(
-      'User cleared',
-      name: LogScope.auth,
-    );
-
-    try {
-      _userStreamController.add(null);
-    } on Exception catch (e) {
-      Log().error(
-        'Error clearing user stream: $e',
-        name: LogScope.auth,
-      );
-    }
-  }
-
   @override
   Future<void> clearToken() async {
-    _clearTokenStream();
     await _storageService.clearToken();
   }
 
   @override
   Future<void> saveToken({required UserTokenEntity token}) async {
     _currentToken = token;
-    _updateTokenStream(token);
     await _storageService.saveToken(token);
   }
 
   @override
   UserTokenEntity? get token => _currentToken;
 
-  void _clearTokenStream() {
-    Log().warning(
-      'Token cleared',
-      name: LogScope.auth,
+  @override
+  Future<UserTokenEntity?> getToken() async {
+    final tokenResult = await _storageService.getToken();
+
+    tokenResult.fold(
+      (failure) {
+        Log().error('Error getting token: $failure', name: LogScope.auth);
+      },
+      (token) {
+        _currentToken = token;
+      },
     );
 
-    try {
-      _tokenStreamController.add(null);
-    } on Exception catch (e) {
-      Log().error(
-        'Error clearing token stream: $e',
-        name: LogScope.auth,
-      );
-    }
-  }
-
-  void _updateTokenStream(UserTokenEntity token) {
-    try {
-      _tokenStreamController.add(token);
-    } on Exception catch (e) {
-      Log().error(
-        'Error updating token stream: $e',
-        name: LogScope.auth,
-      );
-    }
-
-    Log().info(
-      'Token updated: $token',
-      name: LogScope.auth,
-    );
-
-    Log().info(
-      'Access Token: ${token.accessToken}',
-      name: LogScope.auth,
-    );
+    return _currentToken;
   }
 
   @override
-  void dispose() {
-    _userStreamController.close();
-    _tokenStreamController.close();
+  Future<UserEntity?> getUser() async {
+    final userResult = await _storageService.getUser();
+
+    userResult.fold(
+      (failure) {
+        Log().error('Error getting user: $failure', name: LogScope.auth);
+      },
+      (user) {
+        _currentUser = user;
+      },
+    );
+
+    return _currentUser;
   }
 }

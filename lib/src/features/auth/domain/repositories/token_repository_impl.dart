@@ -4,7 +4,9 @@ import 'package:orders_sw/src/core/exception/failure.dart';
 import 'package:orders_sw/src/core/external/network/exception_handler.dart';
 import 'package:orders_sw/src/core/external/network/http_service.dart';
 import 'package:orders_sw/src/features/auth/data/models/user_token_request_model.dart';
+import 'package:orders_sw/src/features/auth/data/models/user_token_response_model.dart';
 import 'package:orders_sw/src/features/auth/data/repositories/token_repository.dart';
+import 'package:orders_sw/src/features/auth/domain/entities/user_token.dart';
 import 'package:orders_sw/src/features/auth/domain/entities/user_token_request.dart';
 
 class TokenRepositoryImpl implements TokenRepository {
@@ -13,14 +15,14 @@ class TokenRepositoryImpl implements TokenRepository {
   TokenRepositoryImpl({required HttpService httpService}) : _httpService = httpService;
 
   @override
-  Future<Either<Failure, UserTokenRequestEntity>> generate(UserTokenRequestEntity entity) async {
+  Future<Either<Failure, UserTokenEntity>> generate(UserTokenRequestEntity entity) async {
     try {
       final response = await _httpService.post(
         Endpoints.emitToken,
         body: UserTokenRequestModel.fromEntity(entity).toMap(),
       );
 
-      final token = UserTokenRequestModel.fromMap(response.data).toEntity();
+      final token = UserTokenResponseModel.fromMap(response).toEntity();
 
       return Right(token);
     } on Exception catch (e) {
@@ -36,7 +38,7 @@ class TokenRepositoryImpl implements TokenRepository {
         body: UserTokenRefreshRequestModel(refreshToken: token).toMap(),
       );
 
-      final tokenResponse = UserTokenRefreshRequestModel.fromMap(response.data).toEntity();
+      final tokenResponse = UserTokenRefreshRequestModel.fromMap(response).toEntity();
 
       return Right(tokenResponse);
     } on Exception catch (e) {

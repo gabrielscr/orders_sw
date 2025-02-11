@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 
 class FinishOrderEntity extends Equatable {
   final String id;
-
   final String description;
   final String customerName;
 
