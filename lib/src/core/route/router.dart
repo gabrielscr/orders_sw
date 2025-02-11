@@ -7,7 +7,7 @@ import 'package:orders_sw/src/core/route/global_keys.dart';
 import 'package:orders_sw/src/core/route/route_path.dart';
 import 'package:orders_sw/src/core/route/router_log_observer.dart';
 import 'package:orders_sw/src/core/route/routes.dart';
-import 'package:orders_sw/src/features/auth/domain/services/auth_service.dart';
+import 'package:orders_sw/src/features/auth/domain/services/token_service.dart';
 import 'package:orders_sw/src/features/auth/presentation/views/auth_view.dart';
 import 'package:orders_sw/src/features/auth/presentation/views/splash_view.dart';
 import 'package:orders_sw/src/features/order/presentation/views/order_detail_view.dart';
@@ -66,7 +66,7 @@ FutureOr<String?> _onRedirect(GoRouterState state) async {
     return null;
   }
 
-  final isAuthenticated = await getIt<AuthService>().isAuthenticated();
+  final isAuthenticated = await getIt<TokenService>().isAuthenticated();
 
   if (!isAuthenticated) {
     return RoutePath.login;

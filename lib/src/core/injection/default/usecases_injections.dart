@@ -12,11 +12,11 @@ import 'package:orders_sw/src/features/order/domain/usecases/get_orders_usecase.
 class UsecasesInjections implements Injection {
   @override
   Future<void> inject(GetIt getIt) async {
-    getIt.registerFactory<GenerateTokenUsecase>(() => GenerateTokenUsecase(tokenRepository: getIt(), authService: getIt()));
+    getIt.registerFactory<GenerateTokenUsecase>(() => GenerateTokenUsecase(tokenRepository: getIt(), tokenService: getIt()));
     getIt.registerFactory<GenerateRefreshTokenUsecase>(() => GenerateRefreshTokenUsecase(tokenRepository: getIt()));
     getIt.registerFactory<RevokeTokenUsecase>(() => RevokeTokenUsecase(tokenRepository: getIt()));
     getIt.registerFactory<GetUserUsecase>(() => GetUserUsecase(authRepository: getIt()));
-    getIt.registerFactory<RestoreSessionUsecase>(() => RestoreSessionUsecase(authService: getIt()));
+    getIt.registerFactory<RestoreSessionUsecase>(() => RestoreSessionUsecase(tokenService: getIt()));
 
     getIt.registerFactory<GetOrdersUsecase>(() => GetOrdersUsecase(orderRepository: getIt()));
     getIt.registerFactory<FinishOrderUsecase>(() => FinishOrderUsecase(orderRepository: getIt()));

@@ -1,7 +1,7 @@
 class AppConstants {
   static const String userInvalid = 'Usuário ou senha inválidos, tente novamente';
   static const String generalError = 'Erro em nosso servidor, tente novamente';
-  static const String welcome = 'Bem-vindo ao Orders SW';
+  static const String welcome = 'Bem-vindo ao SW Orders';
   static const String loginToContinue = 'Faça login para continuar';
 
   static const String user = 'Usuário';

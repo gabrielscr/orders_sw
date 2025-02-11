@@ -31,14 +31,14 @@ class TokenRepositoryImpl implements TokenRepository {
   }
 
   @override
-  Future<Either<Failure, UserTokenRefreshRequest>> refresh(String token) async {
+  Future<Either<Failure, UserTokenEntity>> refresh(String token) async {
     try {
       final response = await _httpService.post(
         Endpoints.refreshToken,
         body: UserTokenRefreshRequestModel(refreshToken: token).toMap(),
       );
 
-      final tokenResponse = UserTokenRefreshRequestModel.fromMap(response).toEntity();
+      final tokenResponse = UserTokenResponseModel.fromMap(response).toEntity();
 
       return Right(tokenResponse);
     } on Exception catch (e) {

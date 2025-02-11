@@ -2,22 +2,22 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:orders_sw/src/core/exception/status_code.dart';
-import 'package:orders_sw/src/core/injection/injections.dart';
 import 'package:orders_sw/src/core/injection/log/log.dart';
 import 'package:orders_sw/src/core/injection/log/log_scope.dart';
-import 'package:orders_sw/src/features/auth/domain/services/auth_service.dart';
+import 'package:orders_sw/src/features/auth/domain/entities/user_token.dart';
+import 'package:orders_sw/src/features/auth/domain/services/token_service.dart';
 
 class TokenInterceptor extends InterceptorsWrapper {
-  TokenInterceptor({required AuthService authService}) : _authService = authService;
+  TokenInterceptor({required TokenService tokenService}) : _tokenService = tokenService;
 
-  final AuthService _authService;
+  final TokenService _tokenService;
 
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final userToken = await getIt<AuthService>().getToken();
+    final userToken = await _tokenService.getToken();
 
     if (userToken == null) {
       Log().warning(
@@ -44,13 +44,62 @@ class TokenInterceptor extends InterceptorsWrapper {
     ErrorInterceptorHandler handler,
   ) async {
     if (err.response?.statusCode == StatusCode.e401) {
-      Log().warning(
-        'Unauthorized',
+      final oldToken = await _tokenService.getToken();
+
+      if (oldToken == null) {
+        Log().warning(
+          'No Access Token found',
+          name: LogScope.api,
+        );
+
+        return handler.next(err);
+      }
+
+      UserTokenEntity? refreshToken;
+
+      final response = await _tokenService.getRefreshToken(oldToken.accessToken);
+
+      response.fold(
+        (failure) {
+          Log().warning(
+            'Error refreshing token',
+            name: LogScope.api,
+          );
+
+          return handler.next(err);
+        },
+        (token) {
+          refreshToken = token;
+        },
+      );
+
+      if (refreshToken == null) {
+        Log().warning(
+          'Error refreshing token: ${err.response?.statusCode}',
+          name: LogScope.api,
+        );
+
+        return handler.next(err);
+      }
+
+      Log().info(
+        'Token refreshed successfully',
         name: LogScope.api,
       );
-      await _authService.clearUser();
-      await _authService.clearToken();
+
+      await _tokenService.saveToken(token: refreshToken!);
+
+      final RequestOptions requestOptions = err.requestOptions;
+      requestOptions.headers['Authorization'] = 'Bearer ${refreshToken!.accessToken}';
+
+      try {
+        final response = await Dio().fetch(requestOptions);
+        return handler.resolve(response);
+      } catch (e) {
+        return handler.next(err);
+      }
     }
+
     handler.next(err);
   }
 }

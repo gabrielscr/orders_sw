@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:orders_sw/src/features/auth/domain/entities/user_token_request.dart';
-import 'package:orders_sw/src/features/auth/domain/usecases/generate_refresh_token_usecase.dart';
 import 'package:orders_sw/src/features/auth/domain/usecases/generate_token_usecase.dart';
 import 'package:orders_sw/src/features/auth/domain/usecases/get_user_usecase.dart';
 import 'package:orders_sw/src/features/auth/domain/usecases/restore_session_usecase.dart';
@@ -11,19 +10,16 @@ import 'package:orders_sw/src/features/auth/presentation/provider/auth_state.dar
 
 class AuthProvider extends ChangeNotifier {
   final GenerateTokenUsecase _generateTokenUsecase;
-  final GenerateRefreshTokenUsecase _generateRefreshTokenUsecase;
   final RevokeTokenUsecase _revokeTokenUsecase;
   final GetUserUsecase _getUserUsecase;
   final RestoreSessionUsecase _restoreSessionUsecase;
 
   AuthProvider({
     required GenerateTokenUsecase generateTokenUsecase,
-    required GenerateRefreshTokenUsecase generateRefreshTokenUsecase,
     required RevokeTokenUsecase revokeTokenUsecase,
     required GetUserUsecase getUserUsecase,
     required RestoreSessionUsecase restoreSessionUsecase,
   })  : _generateTokenUsecase = generateTokenUsecase,
-        _generateRefreshTokenUsecase = generateRefreshTokenUsecase,
         _revokeTokenUsecase = revokeTokenUsecase,
         _getUserUsecase = getUserUsecase,
         _restoreSessionUsecase = restoreSessionUsecase {
@@ -78,21 +74,6 @@ class AuthProvider extends ChangeNotifier {
         );
 
         return;
-      },
-      (token) => _updateState(
-        AuthState.authenticated(),
-      ),
-    );
-  }
-
-  Future<void> generateRefreshToken() async {
-    final result = await _generateRefreshTokenUsecase(state.token!.refreshToken);
-
-    result.fold(
-      (failure) {
-        _updateState(
-          AuthState.unauthenticated(),
-        );
       },
       (token) => _updateState(
         AuthState.authenticated(),

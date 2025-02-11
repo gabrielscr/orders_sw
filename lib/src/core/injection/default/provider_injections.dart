@@ -9,7 +9,6 @@ class ProviderInjections implements Injection {
     getIt.registerFactory(
       () => AuthProvider(
         generateTokenUsecase: getIt(),
-        generateRefreshTokenUsecase: getIt(),
         revokeTokenUsecase: getIt(),
         getUserUsecase: getIt(),
         restoreSessionUsecase: getIt(),

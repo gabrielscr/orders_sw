@@ -25,7 +25,7 @@ class _SplashViewState extends State<SplashView> {
         builder: (context, state, child) {
           Future.delayed(const Duration(seconds: 2), () {
             if (state.status == AuthStatus.authenticated) {
-              context.go(RoutePath.orders);
+              context.pushReplacement(RoutePath.orders);
             } else {
               context.go(RoutePath.login);
             }

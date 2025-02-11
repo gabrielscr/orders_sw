@@ -5,6 +5,6 @@ import 'package:orders_sw/src/features/auth/domain/entities/user_token_request.d
 
 abstract class TokenRepository {
   Future<Either<Failure, UserTokenEntity>> generate(UserTokenRequestEntity entity);
-  Future<Either<Failure, UserTokenRefreshRequest>> refresh(String token);
+  Future<Either<Failure, UserTokenEntity?>> refresh(String token);
   Future<Either<Failure, Unit>> revoke(String token);
 }

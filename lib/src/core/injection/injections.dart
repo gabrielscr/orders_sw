@@ -16,6 +16,7 @@ import 'package:orders_sw/src/core/injection/default/usecases_injections.dart';
 import 'package:orders_sw/src/core/injection/log/log.dart';
 import 'package:orders_sw/src/core/injection/log/log_scope.dart';
 import 'package:orders_sw/src/features/auth/domain/services/auth_service.dart';
+import 'package:orders_sw/src/features/auth/domain/services/token_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -39,9 +40,10 @@ class ConfigInjection {
     getIt.registerSingleton<SecureStorage>(SecureStorageImpl(flutterSecureStorage: const FlutterSecureStorage()));
     getIt.registerLazySingleton<StorageService>(() => StorageServiceImpl(secureStorage: getIt<SecureStorage>()));
     getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl(storageService: getIt<StorageService>()));
+    getIt.registerLazySingleton<TokenService>(() => TokenServiceImpl(storageService: getIt<StorageService>()));
     getIt.registerLazySingleton<LoggingInterceptor>(() => LoggingInterceptor());
-    getIt.registerLazySingleton<TokenInterceptor>(() => TokenInterceptor(authService: getIt<AuthService>()));
     getIt.registerLazySingleton<HttpService>(() => HttpServiceImpl(_dioConfig));
+    getIt.registerLazySingleton<TokenInterceptor>(() => TokenInterceptor(tokenService: getIt<TokenService>()));
 
     await RepositoryInjections().inject(getIt);
     await UsecasesInjections().inject(getIt);
@@ -61,9 +63,9 @@ class ConfigInjection {
           },
         ),
       )..interceptors.addAll(
-          {
+          [
             getIt<LoggingInterceptor>(),
             getIt<TokenInterceptor>(),
-          },
+          ],
         );
 }

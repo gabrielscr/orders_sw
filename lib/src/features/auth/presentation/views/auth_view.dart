@@ -64,7 +64,7 @@ class _AuthViewState extends State<AuthView> {
           if (provider.state == AuthState.loading()) {
             SWLoading().show(context);
           } else if (provider.state == AuthState.authenticated()) {
-            context.push(RoutePath.orders);
+            context.pushReplacement(RoutePath.orders);
           } else if (provider.state == AuthState.userError()) {
             showSnackBarError(context, AppConstants.userInvalid);
           } else if (provider.state == AuthState.generalError()) {

@@ -49,13 +49,11 @@ class OrderRepositoryImpl implements OrderRepository {
     try {
       final response = await _httpService.get(Endpoints.orders);
 
-      if (!response is List) {
-        return Left(Failure.general());
-      } else if (response.isEmpty) {
+      if (response.isEmpty) {
         return const Right([]);
       }
 
-      final orders = (response as List).map((e) => OrderModel.fromEntity(e).toEntity()).toList();
+      final orders = (response as List).map((e) => OrderModel.fromMap(e).toEntity()).toList();
 
       return Right(orders);
     } on Exception catch (e) {

@@ -8,7 +8,7 @@ extension DioResponseHandler on Future<Response<Object?>> {
   Future<T> handleResponse<T>() async {
     try {
       final response = await this;
-      final responseData = response.data as Map<String, dynamic>?;
+      final responseData = response.data is List ? response.data : response.data as Map<String, dynamic>?;
 
       if (responseData == null) {
         throw ApiException(
