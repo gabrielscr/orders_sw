@@ -7,8 +7,8 @@ import 'package:orders_sw/src/core/route/route_path.dart';
 import 'package:orders_sw/src/core/utils/extensions.dart';
 import 'package:orders_sw/src/core/utils/utils.dart';
 import 'package:orders_sw/src/features/order/domain/entities/order_entity.dart';
-import 'package:orders_sw/src/features/order/presentation/viewmodels/order_provider.dart';
-import 'package:orders_sw/src/features/order/presentation/viewmodels/order_state.dart';
+import 'package:orders_sw/src/features/order/presentation/provider/order_provider.dart';
+import 'package:orders_sw/src/features/order/presentation/provider/order_state.dart';
 import 'package:provider/provider.dart';
 
 class OrderDetailView extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'package:orders_sw/src/features/order/domain/entities/order_entity.dart';
 import 'package:orders_sw/src/features/order/domain/usecases/create_order_usecase.dart';
 import 'package:orders_sw/src/features/order/domain/usecases/finish_order_usecase.dart';
 import 'package:orders_sw/src/features/order/domain/usecases/get_orders_usecase.dart';
-import 'package:orders_sw/src/features/order/presentation/viewmodels/order_state.dart';
+import 'package:orders_sw/src/features/order/presentation/provider/order_state.dart';
 
 class OrderProvider extends ChangeNotifier {
   final GetOrdersUsecase _getOrdersUsecase;
